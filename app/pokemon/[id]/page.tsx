@@ -7,6 +7,7 @@ import PokemonTypeTag from '@/components/PokemonTypeTag';
 import StatBar from '@/components/StatBar';
 import { ArrowLeft } from 'lucide-react';
 
+// Generate static pages for the first 151 Pokémon at build time
 export async function generateStaticParams() {
   const ids = Array.from({ length: 1010 }, (_, i) => (i + 1).toString());
   return ids.map(id => ({ id }));
