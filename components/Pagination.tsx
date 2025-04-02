@@ -52,7 +52,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
       <div className="flex gap-2">
         {getPageNumbers().map((pageNum, index) => (
           pageNum === -1 ? (
-            <span key={`ellipsis-${index}`} className="px-3 py-2 text-white">...</span>
+            <span key={`ellipsis-${index}`} className="px-3 py-2 text-gray-700 dark:text-gray-300">...</span>
           ) : (
             <button
               key={pageNum}
@@ -60,7 +60,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
               className={`px-3 py-1 rounded-md ${
                 currentPage === pageNum
                   ? 'bg-red-600 text-white'
-                  : 'text-white hover:bg-red-700'
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-red-700 hover:text-white'
               }`}
               aria-label={`Go to page ${pageNum}`}
               aria-current={currentPage === pageNum ? 'page' : undefined}

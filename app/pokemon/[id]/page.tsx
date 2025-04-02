@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getPokemonDetail, getPokemonImageUrl } from '@/lib/api';
+import { getPokemonDetail, getPokemonImageUrl, getPokemonList } from '@/lib/api';
 import { PokemonDetail } from '@/lib/types';
 import PokemonTypeTag from '@/components/PokemonTypeTag';
 import StatBar from '@/components/StatBar';
@@ -17,6 +17,21 @@ async function getPokemon(id: string): Promise<PokemonDetail> {
   return getPokemonDetail(id);
 }
 
+// Add preloading function for next batch of Pokemon
+async function preloadNextPokemon(currentPage: number, itemsPerPage: number = 12) {
+  const start = (currentPage * itemsPerPage) + 1;
+  const end = start + itemsPerPage;
+  const nextIds = Array.from({ length: itemsPerPage }, (_, i) => start + i)
+    .filter(id => id <= 1010);
+    
+  // Trigger preloading of images
+  nextIds.forEach(id => {
+    const imgUrl = getPokemonImageUrl(id);
+    const img = new Image(0, 0);
+    img.src = imgUrl;
+  });
+}
+
 export default async function PokemonDetailPage({ params }: { params: { id: string } }) {
   const pokemon = await getPokemon(params.id);
   
@@ -28,14 +43,12 @@ export default async function PokemonDetailPage({ params }: { params: { id: stri
       </Link>
       
       <div className="bg-card rounded-lg shadow-lg overflow-hidden">
-        {/* Header with name and number */}
         <div className="bg-primary text-primary-foreground p-6 text-center">
           <h1 className="text-3xl font-bold capitalize">{pokemon.name}</h1>
           <p className="text-xl mt-1">#{pokemon.id.toString().padStart(3, '0')}</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
-          {/* Pokemon Image */}
           <div className="flex justify-center items-center">
             <div className="relative h-64 w-64">
               <Image
@@ -44,14 +57,14 @@ export default async function PokemonDetailPage({ params }: { params: { id: stri
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-contain"
-                priority
+                priority={parseInt(params.id) <= 24}
+                loading={parseInt(params.id) <= 24 ? "eager" : "lazy"}
+                quality={75}
               />
             </div>
           </div>
           
-          {/* Pokemon Info */}
           <div>
-            {/* Types */}
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-2">Types</h2>
               <div className="flex gap-2">
@@ -61,7 +74,6 @@ export default async function PokemonDetailPage({ params }: { params: { id: stri
               </div>
             </div>
             
-            {/* Physical Attributes */}
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div>
                 <h2 className="text-xl font-semibold mb-2">Height</h2>
@@ -73,7 +85,6 @@ export default async function PokemonDetailPage({ params }: { params: { id: stri
               </div>
             </div>
             
-            {/* Abilities */}
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-2">Abilities</h2>
               <ul className="list-disc list-inside">
@@ -88,7 +99,6 @@ export default async function PokemonDetailPage({ params }: { params: { id: stri
           </div>
         </div>
         
-        {/* Stats */}
         <div className="p-6 border-t">
           <h2 className="text-2xl font-semibold mb-4">Base Stats</h2>
           <div className="max-w-xl mx-auto">
@@ -102,7 +112,6 @@ export default async function PokemonDetailPage({ params }: { params: { id: stri
           </div>
         </div>
         
-        {/* Moves */}
         <div className="p-6 border-t">
           <h2 className="text-2xl font-semibold mb-4">Moves</h2>
           <div className="flex flex-wrap gap-2">
