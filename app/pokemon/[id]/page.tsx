@@ -7,18 +7,7 @@ import PokemonTypeTag from '@/components/PokemonTypeTag';
 import StatBar from '@/components/StatBar';
 import { ArrowLeft } from 'lucide-react';
 
-// Generate static pages for more Pokémon at build time
 export async function generateStaticParams() {
-  // Change 151 to the desired number of Pokémon
-  // For example: 
-  // 251 for up to Gen 2
-  // 386 for up to Gen 3
-  // 493 for up to Gen 4
-  // 649 for up to Gen 5
-  // 721 for up to Gen 6
-  // 809 for up to Gen 7
-  // 898 for up to Gen 8
-  // 1010 for up to Gen 9
   const ids = Array.from({ length: 1010 }, (_, i) => (i + 1).toString());
   return ids.map(id => ({ id }));
 }
