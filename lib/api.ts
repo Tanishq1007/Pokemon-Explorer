@@ -1,4 +1,5 @@
 import { PokemonDetail, PokemonListResponse } from './types';
+import { getCachedPokemon, setCachedPokemon } from './cache';
 
 const API_BASE_URL = 'https://pokeapi.co/api/v2';
 
@@ -12,14 +13,25 @@ export async function getPokemonList(limit = 20, offset = 0): Promise<PokemonLis
   return response.json();
 }
 
-export async function getPokemonDetail(nameOrId: string): Promise<PokemonDetail> {
-  const response = await fetch(`${API_BASE_URL}/pokemon/${nameOrId}`);
+export async function getPokemonDetail(id: string): Promise<PokemonDetail> {
+  // Check cache first
+  const cached = getCachedPokemon(id);
+  if (cached) {
+    return cached;
+  }
+
+  const response = await fetch(`${API_BASE_URL}/pokemon/${id}`);
   
   if (!response.ok) {
-    throw new Error(`Failed to fetch Pokemon details for ${nameOrId}`);
+    throw new Error(`Failed to fetch Pokemon details for ${id}`);
   }
   
-  return response.json();
+  const data = await response.json();
+  
+  // Store in cache
+  setCachedPokemon(id, data);
+  
+  return data;
 }
 
 export function getPokemonImageUrl(id: number): string {

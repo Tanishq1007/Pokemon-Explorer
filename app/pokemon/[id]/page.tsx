@@ -24,12 +24,8 @@ async function preloadNextPokemon(currentPage: number, itemsPerPage: number = 12
   const nextIds = Array.from({ length: itemsPerPage }, (_, i) => start + i)
     .filter(id => id <= 1010);
     
-  // Trigger preloading of images
-  nextIds.forEach(id => {
-    const imgUrl = getPokemonImageUrl(id);
-    const img = new Image(0, 0);
-    img.src = imgUrl;
-  });
+  // Instead of client-side preloading, we'll prefetch the data
+  await Promise.all(nextIds.map(id => getPokemonDetail(id.toString())));
 }
 
 export default async function PokemonDetailPage({ params }: { params: { id: string } }) {
