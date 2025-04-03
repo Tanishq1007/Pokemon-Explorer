@@ -24,7 +24,7 @@ async function preloadNextPokemon(currentPage: number, itemsPerPage: number = 12
   const nextIds = Array.from({ length: itemsPerPage }, (_, i) => start + i)
     .filter(id => id <= 1010);
     
-  // Instead of client-side preloading, we'll prefetch the data
+
   await Promise.all(nextIds.map(id => getPokemonDetail(id.toString())));
 }
 
