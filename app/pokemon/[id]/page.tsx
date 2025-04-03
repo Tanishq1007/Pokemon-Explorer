@@ -26,7 +26,6 @@ async function preloadNextPokemon(currentPage: number, itemsPerPage: number = 12
     
   // Trigger preloading of image
   await Promise.all(nextIds.map(id => getPokemonDetail(id.toString())));
-  });
 }
 
 export default async function PokemonDetailPage({ params }: { params: { id: string } }) {
